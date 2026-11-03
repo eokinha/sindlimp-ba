@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { MenuItem } from "@/lib/content";
 import Icon from "./Icon";
 import Logo from "./Logo";
@@ -19,6 +19,25 @@ export default function Header({ menu }: { menu: MenuItem[] }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openSub, setOpenSub] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
+  // sticky-nav do tema: passado o cabeçalho, a barra (menu no desktop, logo+hambúrguer no mobile) fica fixa e entra com fadeInDown.
+  const headerRef = useRef<HTMLElement>(null);
+  const [sticky, setSticky] = useState(false);
+  const [height, setHeight] = useState<number | undefined>(undefined);
+  useEffect(() => {
+    const onScroll = () => {
+      const el = headerRef.current;
+      if (!el) return;
+      if (!el.classList.contains("is-sticky")) setHeight(el.offsetHeight);
+      setSticky(window.scrollY > el.offsetHeight);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
   // Fecha o menu móvel ao trocar de rota (ajuste de estado durante o render).
   const [lastPath, setLastPath] = useState(pathname);
   if (lastPath !== pathname) {
@@ -28,7 +47,7 @@ export default function Header({ menu }: { menu: MenuItem[] }) {
   }
 
   return (
-    <header className="site-header">
+    <header ref={headerRef} className={`site-header${sticky ? " is-sticky" : ""}`} style={sticky ? { minHeight: height } : undefined}>
       <div className="header-top">
         <div className="container header-top__inner">
           <Logo />

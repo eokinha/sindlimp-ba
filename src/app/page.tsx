@@ -1,6 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
 import HeroSlider, { type Slide } from "@/components/HeroSlider";
 import Icon, { type IconName } from "@/components/Icon";
+import { Carousel, Reveal, Roller, Tilt } from "@/components/Motion";
 import PostCard from "@/components/PostCard";
 import PostThumb from "@/components/PostThumb";
 import { PHONE } from "@/components/site";
@@ -31,7 +33,13 @@ const SLIDES: Slide[] = [
   },
 ];
 
-const SERVICES = ["Psicologia", "Barbearia", "Assistência Previdênciária", "Exames laboratoriais"];
+const IMG = "/wp-content/themes/gradiant/templates/meu-img/";
+const SERVICES = [
+  { name: "Psicologia", img: "psicologia.png" },
+  { name: "Barbearia", img: "barbearia-removebg-preview.png" },
+  { name: "Assistência Previdênciária", img: "previdencia.png" },
+  { name: "Exames laboratoriais", img: "transferir-removebg-preview.png" },
+];
 
 const FEATURES: { icon: IconName; title: string; text: string }[] = [
   { icon: "users", title: "Filiados", text: "Trabalhadores e trabalhadoras filiados em todo território baiano." },
@@ -72,7 +80,7 @@ export default async function Home() {
       </section>
 
       <section className="section portfolio-section">
-        <div className="container grid-3">
+        <Reveal animation="fadeInUp" className="container grid-3">
           {highlights.map((post) => (
             <figure key={post.slug} className="portfolio-item">
               <Link href={`/${post.slug}`} className="portfolio-thumb" aria-hidden="true" tabIndex={-1}>
@@ -86,47 +94,52 @@ export default async function Home() {
               </figcaption>
             </figure>
           ))}
-        </div>
+        </Reveal>
       </section>
 
       <section className="section post-section post-section--home">
-        <div className="container grid-3">
-          {latest.map((post) => (
-            <PostCard key={post.slug} post={post} />
-          ))}
+        <div className="container">
+          <Carousel className="post-carousel" nav>
+            {latest.map((post, i) => (
+              <PostCard key={post.slug} post={post} count={i + 1} />
+            ))}
+          </Carousel>
         </div>
       </section>
 
-      <section className="section client-section">
+      <Roller className="section client-section">
         <div className="container">
-          <h3 className="section-heading">
-            <span className="primary-color">ASLIMP</span>
-          </h3>
-          <div className="partners">
+          <Reveal animation="fadeInUp">
+            <h3 className="section-heading">
+              <span className="primary-color">ASLIMP</span>
+            </h3>
+          </Reveal>
+          <Carousel className="partner-carousel">
             {SERVICES.map((s) => (
-              <div key={s} className="single-partner">
-                <span className="partner-icon">
-                  <Icon name="heart" size={40} />
-                </span>
-                <strong>{s}</strong>
+              <div key={s.name} className="single-partner">
+                <Image src={IMG + s.img} alt="" width={255} height={255} />
+                <strong className="client-name">{s.name}</strong>
               </div>
             ))}
-          </div>
+          </Carousel>
+          <p className="celularapenas">Deslize para o lado</p>
         </div>
-      </section>
+      </Roller>
 
       <section className="section features-section">
-        <div className="container grid-3">
+        <Reveal animation="fadeInUp" className="container grid-3">
           {FEATURES.map((f) => (
-            <div key={f.title} className="features-item">
+            <Tilt key={f.title}>
+              <div className="features-item">
               <span className="features-icon">
                 <Icon name={f.icon} size={34} />
               </span>
               <h6 className="features-title">{f.title}</h6>
               <p>{f.text}</p>
             </div>
+            </Tilt>
           ))}
-        </div>
+        </Reveal>
       </section>
     </>
   );
