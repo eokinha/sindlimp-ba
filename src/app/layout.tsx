@@ -25,6 +25,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="pt-BR" className={poppins.variable}>
       <body>
+        <noscript>
+          <style>{`.wow{visibility:visible}`}</style>
+        </noscript>
         <a className="skip-link" href="#content">
           Pular para o conteúdo
         </a>
